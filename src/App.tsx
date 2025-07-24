@@ -9,13 +9,11 @@ import {
   RightButton,
 } from "./components";
 import "./App.css";
-
-const POMODORO_TIME = 25 * 60;
-const SHORT_BREAK_TIME = 5 * 60;
-const LONG_BREAK_TIME = 15 * 60;
-const INTERVAL = 4;
+import { usePomodoro } from "./providers/pomodoro-provider";
 
 function App() {
+  const { mode } = usePomodoro();
+
   const handleCloseButton = async () => {
     await invoke("close_window");
   };
@@ -27,9 +25,21 @@ function App() {
         <Header />
         <div className="w-full grid grid-cols-1 grid-rows-[auto_1fr] gap-0.5 place-items-center px-2 pb-2 pt-4">
           <div className="flex gap-3">
-            <StateIndicator label="Pomodoro" isActive={true} />
-            <StateIndicator label="Short Break" isActive={false} />
-            <StateIndicator label="Long Break" isActive={false} />
+            <StateIndicator
+              label="Pomodoro"
+              mode={"pomodoro"}
+              isActive={mode === "pomodoro"}
+            />
+            <StateIndicator
+              label="Short Break"
+              mode={"shortBreak"}
+              isActive={mode === "shortBreak"}
+            />
+            <StateIndicator
+              label="Long Break"
+              mode={"longBreak"}
+              isActive={mode === "longBreak"}
+            />
           </div>
           <div className="flex w-full justify-between items-baseline">
             {/* Application state running ? Stop : Start */}

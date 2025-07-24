@@ -15,15 +15,19 @@ interface PomodoroContextType {
   pause: () => void;
   reset: () => void;
   next: () => void;
+  updateMode: (newMode: "pomodoro" | "shortBreak" | "longBreak") => void;
 }
 
 const PomodoroContext = createContext<PomodoroContextType | undefined>(
   undefined
 );
 
-const POMODORO_TIME = 25 * 60;
-const SHORT_BREAK_TIME = 5 * 60;
-const LONG_BREAK_TIME = 15 * 60;
+// const POMODORO_TIME = 25 * 60;
+const POMODORO_TIME = 5;
+// const SHORT_BREAK_TIME = 5 * 60;
+const SHORT_BREAK_TIME = 5;
+// const LONG_BREAK_TIME = 15 * 60;
+const LONG_BREAK_TIME = 5;
 const INTERVAL = 4;
 
 export function PomodoroProvider({ children }: { children: React.ReactNode }) {
@@ -59,6 +63,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
 
   const reset = () => {
     pause();
+    setIntervalCount(0); // optional: reset intervals on manual switch
     switch (mode) {
       case "pomodoro":
         setTimeLeft(POMODORO_TIME);
@@ -91,6 +96,22 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateMode = (newMode: "pomodoro" | "shortBreak" | "longBreak") => {
+    pause(); // stop timer if running
+    setMode(newMode);
+    switch (newMode) {
+      case "pomodoro":
+        setTimeLeft(POMODORO_TIME);
+        break;
+      case "shortBreak":
+        setTimeLeft(SHORT_BREAK_TIME);
+        break;
+      case "longBreak":
+        setTimeLeft(LONG_BREAK_TIME);
+        break;
+    }
+  };
+
   const value: PomodoroContextType = {
     mode,
     timeLeft,
@@ -100,6 +121,7 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     pause,
     reset,
     next,
+    updateMode,
   };
 
   return (
