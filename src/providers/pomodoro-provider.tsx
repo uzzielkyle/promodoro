@@ -22,12 +22,9 @@ const PomodoroContext = createContext<PomodoroContextType | undefined>(
   undefined
 );
 
-// const POMODORO_TIME = 25 * 60;
-const POMODORO_TIME = 5;
-// const SHORT_BREAK_TIME = 5 * 60;
-const SHORT_BREAK_TIME = 5;
-// const LONG_BREAK_TIME = 15 * 60;
-const LONG_BREAK_TIME = 5;
+const POMODORO_TIME = 25 * 60;
+const SHORT_BREAK_TIME = 5 * 60;
+const LONG_BREAK_TIME = 15 * 60;
 const INTERVAL = 4;
 
 export function PomodoroProvider({ children }: { children: React.ReactNode }) {
