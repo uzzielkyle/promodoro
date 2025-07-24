@@ -13,8 +13,12 @@
     "windows": [
       {
         "title": "promodoro",
-        "width": 800,
-        "height": 600
+        "width": 370,
+        "height": 200,
+        "resizable": false,
+        "decorations": false,
+        "dragDropEnabled": false,
+        "transparent": true
       }
     ],
     "security": {
