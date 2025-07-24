@@ -1,9 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { PomodoroProvider } from "./providers/pomodoro-provider";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <PomodoroProvider>
+      <App />
+    </PomodoroProvider>
   </React.StrictMode>
 );

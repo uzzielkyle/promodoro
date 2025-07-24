@@ -10,6 +10,11 @@ import {
 } from "./components";
 import "./App.css";
 
+const POMODORO_TIME = 25 * 60;
+const SHORT_BREAK_TIME = 5 * 60;
+const LONG_BREAK_TIME = 15 * 60;
+const INTERVAL = 4;
+
 function App() {
   const handleCloseButton = async () => {
     await invoke("close_window");
@@ -27,8 +32,10 @@ function App() {
             <StateIndicator label="Long Break" isActive={false} />
           </div>
           <div className="flex w-full justify-between items-baseline">
+            {/* Application state running ? Stop : Start */}
             <LeftButton />
             <Time />
+            {/* Application state running ? Pause : Reset */}
             <RightButton />
           </div>
         </div>
