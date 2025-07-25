@@ -1,9 +1,9 @@
 [package]
 name = "promodoro"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+version = "1.0.0"
+description = "A Y2k-themed pomodoro timer widget for desktop."
+authors = ["Uzziel Kyle Ynciong"]
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
