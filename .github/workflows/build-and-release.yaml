@@ -46,6 +46,7 @@ jobs:
         id: generate_notes
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        shell: bash
         run: |
           echo "Fetching last 10 commit messages..."
           commits=$(git log -n 10 --pretty=format:'- %s')
