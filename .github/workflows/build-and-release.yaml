@@ -1,0 +1,92 @@
+name: Build & Release with AI Notes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Install NSIS (Windows installer tool)
+        run: choco install nsis -y
+
+      - name: Install Tauri CLI
+        run: npm install --save-dev @tauri-apps/cli
+
+      - name: Build Tauri app
+        run: npx tauri build
+
+      - name: Install jq (Windows)
+        run: choco install jq -y
+
+      - name: Generate AI Release Notes
+        id: generate_notes
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "Fetching last 10 commit messages..."
+          commits=$(git log -n 10 --pretty=format:'- %s')
+          echo "Commits to summarize:"
+          echo "$commits"
+
+          prompt="You are a release notes assistant. Summarize the following git commit messages into a short, clear, and friendly release note:\n$commits"
+
+          echo "Calling OpenAI API..."
+
+          response=$(curl https://api.openai.com/v1/chat/completions \
+            -s -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -d '{
+              "model": "gpt-4",
+              "messages": [{"role": "user", "content": "'"$prompt"'"}],
+              "max_tokens": 300,
+              "temperature": 0.7
+            }' | jq -r '.choices[0].message.content')
+
+          echo "OpenAI response:"
+          echo "$response"
+
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          echo "$response" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release with AI Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.sha }}
+          name: Release ${{ github.sha }}
+          body: ${{ env.RELEASE_NOTES }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Installer Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: src-tauri/target/release/bundle/nsis/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
